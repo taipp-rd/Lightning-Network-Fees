@@ -1,0 +1,15 @@
+# Lightning Network Fee Analysis - Python Dependencies
+
+# Database
+psycopg2-binary>=2.9.9
+
+# Data Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Optional: For enhanced analysis
+scipy>=1.10.0
