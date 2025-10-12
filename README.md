@@ -1,34 +1,34 @@
-# Lightning Network Fee Distribution Analysis
+# Lightning Network 手数料分布分析
 
-Comprehensive analysis of fee structures in the Lightning Network, including base fees, proportional fees, and inbound fees.
+Lightning Networkにおける手数料構造の包括的な分析ツール。基本手数料、比例手数料、およびInbound手数料を分析します。
 
-## Overview
+## 概要
 
-This repository contains four analysis scripts that examine different aspects of Lightning Network routing fees:
+このリポジトリには、Lightning Networkのルーティング手数料のさまざまな側面を分析する4つのスクリプトが含まれています：
 
-1. **Base Fee Analysis** (`1_base_fee_analysis.py`) - Distribution of fixed fees per payment
-2. **Proportional Fee Analysis** (`2_fee_rate_analysis.py`) - Distribution of percentage-based fees
-3. **Inbound Base Fee Analysis** (`3_inbound_base_fee_analysis.py`) - Fixed fees for receiving payments
-4. **Inbound Proportional Fee Analysis** (`4_inbound_feerate_analysis.py`) - Percentage fees for receiving payments
+1. **基本手数料分析** (`1_base_fee_analysis.py`) - 支払いごとの固定手数料の分布
+2. **比例手数料分析** (`2_fee_rate_analysis.py`) - 支払い額に比例する手数料の分布
+3. **Inbound基本手数料分析** (`3_inbound_base_fee_analysis.py`) - 受信時の固定手数料の分布
+4. **Inbound比例手数料分析** (`4_inbound_feerate_analysis.py`) - 受信時の比例手数料の分布
 
-## Theoretical Background
+## 理論的背景
 
-Lightning Network routing fees consist of two components:
+Lightning Networkのルーティング手数料は2つの要素で構成されます：
 
-### Outbound Fees (Traditional)
-- **Base Fee (rp_base_fee_msat)**: Fixed fee charged per payment, regardless of amount
-- **Proportional Fee (rp_feerate_ppm)**: Fee proportional to payment amount (in parts-per-million)
+### Outbound手数料（従来型）
+- **基本手数料 (rp_base_fee_msat)**: 支払い額に関係なく課される固定手数料
+- **比例手数料 (rp_feerate_ppm)**: 支払い額に比例する手数料（百万分率で表現）
 
-### Inbound Fees (Advanced)
-- **Inbound Base Fee (rp_inbound_base_fee_msat)**: Fixed fee for receiving payments
-- **Inbound Proportional Fee (rp_inbound_feerate_ppm)**: Percentage fee for receiving payments
+### Inbound手数料（先進的）
+- **Inbound基本手数料 (rp_inbound_base_fee_msat)**: 支払い受信時の固定手数料
+- **Inbound比例手数料 (rp_inbound_feerate_ppm)**: 支払い受信時の比例手数料
 
-Inbound fees address the **liquidity imbalance problem** in payment channels, allowing nodes to:
-- Charge for incoming liquidity
-- Dynamically adjust pricing based on channel balance
-- Incentivize balanced channel states
+Inbound手数料は、ペイメントチャネルにおける**流動性不均衡問題**に対処するもので、ノードは以下が可能になります：
+- 流入する流動性に対して手数料を課金
+- チャネル残高に基づいて動的に価格調整
+- バランスの取れたチャネル状態を促進
 
-## Academic References
+## 学術的参考文献
 
 - **Pickhardt & Richter (2021)**: "Optimally Reliable & Cheap Payment Flows on the Lightning Network" - https://arxiv.org/abs/2107.05322
 - **Rohrer et al. (2019)**: "Discharged Payment Channels: Quantifying the Lightning Network's Resilience" - https://arxiv.org/abs/1904.10253
@@ -36,37 +36,37 @@ Inbound fees address the **liquidity imbalance problem** in payment channels, al
 - **Nisslmueller et al. (2023)**: "Towards Fee Estimation in Lightning Network"
 - **Tikhomirov et al. (2020)**: "Quantifying Blockchain Extractable Value"
 
-## Requirements
+## 必要な環境
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Database Setup
+## データベースセットアップ
 
-These scripts connect to a PostgreSQL database containing Lightning Network graph data with the following tables:
+これらのスクリプトは、以下のテーブルを含むLightning Networkグラフデータを格納したPostgreSQLデータベースに接続します：
 
-- `channel_update`: Channel routing policies and fees
-- `closed_channel`: Historical channel closures
-- `node_announcement`: Node metadata and aliases
+- `channel_update`: チャネルのルーティングポリシーと手数料
+- `closed_channel`: 過去のチャネル閉鎖記録
+- `node_announcement`: ノードのメタデータとエイリアス
 
-### Table Structure
+### テーブル構造
 
 #### channel_update
-- `chan_id`: Channel identifier
-- `advertising_nodeid`: Node announcing the policy
-- `connecting_nodeid`: Peer node
-- `rp_base_fee_msat`: Outbound base fee (millisatoshi)
-- `rp_feerate_ppm`: Outbound proportional fee (parts per million)
-- `rp_inbound_base_fee_msat`: Inbound base fee
-- `rp_inbound_feerate_ppm`: Inbound proportional fee
-- `rp_disabled`: Whether the channel is disabled
-- `rp_last_update`: Last policy update timestamp
-- `timestamp`: Record creation timestamp
+- `chan_id`: チャネル識別子
+- `advertising_nodeid`: ポリシーを告知するノード
+- `connecting_nodeid`: 接続先ノード
+- `rp_base_fee_msat`: Outbound基本手数料（ミリサトシ）
+- `rp_feerate_ppm`: Outbound比例手数料（百万分率）
+- `rp_inbound_base_fee_msat`: Inbound基本手数料
+- `rp_inbound_feerate_ppm`: Inbound比例手数料
+- `rp_disabled`: チャネルが無効かどうか
+- `rp_last_update`: 最終ポリシー更新タイムスタンプ
+- `timestamp`: レコード作成タイムスタンプ
 
-## Usage
+## 使用方法
 
-### 1. Base Fee Analysis
+### 1. 基本手数料分析
 
 ```bash
 python 1_base_fee_analysis.py \
@@ -77,18 +77,18 @@ python 1_base_fee_analysis.py \
     --pg-pass secret
 ```
 
-**Output:**
-- `1_base_fee_distribution.png`: Multi-panel visualization
-- `1_base_fee_distribution_stats.csv`: Statistical summary
-- `1_base_fee_distribution_data.csv`: Raw fee data
+**出力:**
+- `1_base_fee_distribution.png`: マルチパネル可視化
+- `1_base_fee_distribution_stats.csv`: 統計サマリー
+- `1_base_fee_distribution_data.csv`: 生データ
 
-**Visualizations:**
-- Linear histogram: Overall distribution
-- Log-scale histogram: Tail behavior
-- CDF: Cumulative probability
-- Box plot: Outlier detection
+**可視化内容:**
+- 線形ヒストグラム: 全体的な分布
+- 対数スケールヒストグラム: 裾野の挙動
+- CDF: 累積確率
+- ボックスプロット: 外れ値検出
 
-### 2. Proportional Fee Rate Analysis
+### 2. 比例手数料分析
 
 ```bash
 python 2_fee_rate_analysis.py \
@@ -99,18 +99,18 @@ python 2_fee_rate_analysis.py \
     --pg-pass secret
 ```
 
-**Output:**
-- `2_fee_rate_distribution.png`: Multi-panel visualization
-- `2_fee_rate_distribution_stats.csv`: Statistical summary
-- `2_fee_rate_distribution_data.csv`: Raw fee rate data
+**出力:**
+- `2_fee_rate_distribution.png`: マルチパネル可視化
+- `2_fee_rate_distribution_stats.csv`: 統計サマリー
+- `2_fee_rate_distribution_data.csv`: 生データ
 
-**Visualizations:**
-- Linear histogram: Distribution of fee rates
-- Log-scale histogram: High fee channels
-- CDF: Fee percentiles
-- Violin plot: Density estimation
+**可視化内容:**
+- 線形ヒストグラム: 手数料率の分布
+- 対数スケールヒストグラム: 高手数料チャネル
+- CDF: 手数料パーセンタイル
+- バイオリンプロット: 密度推定
 
-### 3. Inbound Base Fee Analysis
+### 3. Inbound基本手数料分析
 
 ```bash
 python 3_inbound_base_fee_analysis.py \
@@ -121,18 +121,18 @@ python 3_inbound_base_fee_analysis.py \
     --pg-pass secret
 ```
 
-**Output:**
-- `3_inbound_base_fee_distribution.png`: Multi-panel visualization
-- `3_inbound_base_fee_distribution_stats.csv`: Statistical summary
-- `3_inbound_base_fee_distribution_data.csv`: Raw inbound fee data
+**出力:**
+- `3_inbound_base_fee_distribution.png`: マルチパネル可視化
+- `3_inbound_base_fee_distribution_stats.csv`: 統計サマリー
+- `3_inbound_base_fee_distribution_data.csv`: 生データ
 
-**Visualizations:**
-- Linear histogram: Inbound fee distribution
-- Log-scale histogram: Positive fees
-- CDF: Cumulative distribution
-- Scatter plot: Inbound vs outbound comparison
+**可視化内容:**
+- 線形ヒストグラム: Inbound手数料分布
+- 対数スケールヒストグラム: 正の手数料
+- CDF: 累積分布
+- 散布図: InboundとOutboundの比較
 
-### 4. Inbound Proportional Fee Analysis
+### 4. Inbound比例手数料分析
 
 ```bash
 python 4_inbound_feerate_analysis.py \
@@ -143,153 +143,170 @@ python 4_inbound_feerate_analysis.py \
     --pg-pass secret
 ```
 
-**Output:**
-- `4_inbound_feerate_distribution.png`: Multi-panel visualization
-- `4_inbound_feerate_distribution_stats.csv`: Statistical summary
-- `4_inbound_feerate_distribution_data.csv`: Raw inbound fee rate data
+**出力:**
+- `4_inbound_feerate_distribution.png`: マルチパネル可視化
+- `4_inbound_feerate_distribution_stats.csv`: 統計サマリー
+- `4_inbound_feerate_distribution_data.csv`: 生データ
 
-**Visualizations:**
-- Linear histogram: Distribution
-- Log-scale histogram: Positive fees
-- CDF: Percentile analysis
-- Scatter plot: Inbound vs outbound
-- Heatmap: Fee pattern analysis
+**可視化内容:**
+- 線形ヒストグラム: 分布
+- 対数スケールヒストグラム: 正の手数料
+- CDF: パーセンタイル分析
+- 散布図: InboundとOutbound
+- ヒートマップ: 手数料パターン分析
 
-## Data Selection Strategy
+## データ選択戦略
 
-All scripts implement the following data filtering approach:
+すべてのスクリプトは以下のデータフィルタリングアプローチを実装しています：
 
-1. **Latest Records Only**: Uses `DISTINCT ON (chan_id, advertising_nodeid)` with `ORDER BY timestamp DESC` to get the most recent routing policy for each channel direction
+1. **最新レコードのみ**: `DISTINCT ON (chan_id, advertising_nodeid)` と `ORDER BY timestamp DESC` を使用して、各チャネル方向の最新のルーティングポリシーを取得
 
-2. **Open Channels Only**: Excludes closed channels by LEFT JOIN with `closed_channel` table
+2. **オープンチャネルのみ**: `closed_channel` テーブルとのLEFT JOINでクローズドチャネルを除外
 
-3. **Enabled Channels Only**: Filters out disabled channels (`rp_disabled = false`)
+3. **有効なチャネルのみ**: 無効なチャネル（`rp_disabled = false`）を除外
 
-4. **Valid Fees**: Excludes invalid or NULL fee values
+4. **有効な手数料**: 無効またはNULLの手数料値を除外
 
-This ensures analysis reflects the **current state** of the Lightning Network (approximately 40,000-50,000 active channels).
+これにより、分析がLightning Networkの**現在の状態**を反映します（約40,000〜50,000のアクティブチャネル）。
 
-## Key Statistics Computed
+## 計算される主要統計量
 
-Each script computes comprehensive statistics:
+各スクリプトは包括的な統計を計算します：
 
-- **Central Tendency**: Mean, Median
-- **Dispersion**: Standard Deviation, Min, Max
-- **Percentiles**: Q25, Q75, Q90, Q95, Q99
-- **Fee Categories**: 
-  - Zero fee channels (%)
-  - Low fee channels (≤100 ppm or base equivalent)
-  - Medium fee channels (100-1000 ppm)
-  - High fee channels (>1000 ppm)
-  - Positive vs Negative fees (for inbound fees)
+- **中心傾向**: 平均、中央値
+- **ばらつき**: 標準偏差、最小値、最大値
+- **パーセンタイル**: Q25、Q75、Q90、Q95、Q99
+- **手数料カテゴリ**: 
+  - ゼロ手数料チャネル（%）
+  - 低手数料チャネル（≤100 ppm または同等の基本手数料）
+  - 中手数料チャネル（100-1000 ppm）
+  - 高手数料チャネル（>1000 ppm）
+  - 正と負の手数料（Inbound手数料の場合）
 
-## Interpretation Guidelines
+## 解釈ガイドライン
 
-### Base Fees
-- **Zero base fees**: Many nodes use zero base fees to encourage routing
-- **High base fees**: May discourage small payments (micropayments)
-- **Distribution shape**: Typically right-skewed with long tail
+### 基本手数料
+- **ゼロ基本手数料**: 多くのノードはルーティングを促進するためにゼロ基本手数料を使用
+- **高基本手数料**: 小額決済（マイクロペイメント）を妨げる可能性
+- **分布形状**: 典型的には右に偏った長い裾野
 
-### Proportional Fees
-- **Typical range**: 0-5000 ppm (0-0.5%)
-- **Zero fees**: Altruistic routing or loss-leader strategy
-- **High fees**: Capital opportunity cost or premium routing
-- **Comparison to traditional finance**: Lightning fees are orders of magnitude lower
+### 比例手数料
+- **典型的な範囲**: 0-5000 ppm（0-0.5%）
+- **ゼロ手数料**: 利他的ルーティングまたは損失リーダー戦略
+- **高手数料**: 資本機会費用またはプレミアムルーティング
+- **従来金融との比較**: Lightning手数料は桁違いに低い
 
-### Inbound Fees
-- **Adoption rate**: Still relatively new, adoption varies
-- **Negative fees**: Paying others to send you payments (liquidity incentive)
-- **Positive fees**: Charging for receiving (liquidity preservation)
-- **Balance management**: Key tool for channel equilibrium
+### Inbound手数料
+- **採用率**: 比較的新しい概念で、採用状況は様々
+- **負の手数料**: 他者に支払いを送信してもらうために支払う（流動性インセンティブ）
+- **正の手数料**: 受信に対して課金（流動性保持）
+- **バランス管理**: チャネル均衡のための重要ツール
 
-## Technical Notes
+## 技術的注釈
 
-### PostgreSQL Query Optimization
+### PostgreSQLクエリ最適化
 
-The SQL queries use:
-- `DISTINCT ON` for efficient deduplication
-- `COALESCE` for NULL handling
-- `LEFT JOIN` for exclusion logic
-- Proper indexing on `chan_id`, `advertising_nodeid`, and `timestamp` is recommended
+SQLクエリは以下を使用：
+- 効率的な重複排除のための`DISTINCT ON`
+- NULL処理のための`COALESCE`
+- 除外ロジックのための`LEFT JOIN`
+- `chan_id`、`advertising_nodeid`、`timestamp`への適切なインデックスを推奨
 
-### Visualization Techniques
+### 可視化技術
 
-1. **Histograms**: Show frequency distribution
-2. **Log Scale**: Reveal tail behavior for skewed distributions
-3. **CDF**: Answer "What % of channels have fee ≤ X?"
-4. **Box Plots**: Identify outliers statistically
-5. **Violin Plots**: Combine box plot with kernel density estimation
-6. **Scatter Plots**: Correlation between inbound and outbound fees
-7. **Heatmaps**: 2D density for pattern recognition
+1. **ヒストグラム**: 頻度分布を表示
+2. **対数スケール**: 偏った分布の裾野の挙動を明らかに
+3. **CDF**: 「手数料 ≤ X のチャネルは何%か？」に回答
+4. **ボックスプロット**: 統計的に外れ値を特定
+5. **バイオリンプロット**: ボックスプロットとカーネル密度推定を組み合わせ
+6. **散布図**: InboundとOutbound手数料の相関
+7. **ヒートマップ**: パターン認識のための2D密度
 
-### Statistical Methods
+### 統計手法
 
-- **Percentiles**: Non-parametric, robust to outliers
-- **Box Plot**: Uses IQR method for outlier detection
-- **Kernel Density**: Smooth probability density estimation
-- **Cumulative Distribution**: Monotonic, interpretable probability
+- **パーセンタイル**: ノンパラメトリック、外れ値に頑健
+- **ボックスプロット**: IQR法による外れ値検出
+- **カーネル密度**: 滑らかな確率密度推定
+- **累積分布**: 単調、解釈可能な確率
 
-## Research Applications
+## 研究への応用
 
-These analysis tools can support research in:
+これらの分析ツールは以下の研究をサポートできます：
 
-1. **Routing Economics**: Understanding fee structures and incentives
-2. **Network Topology**: How fees relate to network position
-3. **Liquidity Management**: Inbound fee adoption and effectiveness
-4. **Payment Feasibility**: Impact of fees on different payment sizes
-5. **Node Strategy**: Optimal fee setting for routing nodes
-6. **Market Dynamics**: Fee competition and evolution over time
+1. **ルーティング経済学**: 手数料構造とインセンティブの理解
+2. **ネットワークトポロジー**: 手数料とネットワーク位置の関係
+3. **流動性管理**: Inbound手数料の採用と有効性
+4. **支払い実現可能性**: 異なる支払いサイズに対する手数料の影響
+5. **ノード戦略**: ルーティングノードの最適な手数料設定
+6. **市場動態**: 手数料競争と時間経過による進化
 
-## Future Extensions
+## 一括実行
 
-Potential additions:
+### Unix/Linux/macOS
 
-- Time-series analysis: Fee evolution over time
-- Geographical analysis: Fee differences by region
-- Capacity correlation: How fees relate to channel size
-- Node centrality: Fee strategies of hub nodes
-- Path finding: Impact of fees on optimal routes
-- Predictive modeling: Fee forecasting
+```bash
+chmod +x run_all_analyses.sh
+./run_all_analyses.sh localhost 5432 lndb readonly secret
+```
 
-## Contributing
+### Windows
 
-Contributions are welcome! Areas for improvement:
+```cmd
+run_all_analyses.bat localhost 5432 lndb readonly secret
+```
 
-- Additional visualization types
-- Statistical tests (e.g., distribution fitting)
-- Comparative analysis tools
-- Time-series components
-- Machine learning models
+すべての結果は `results_YYYYMMDD_HHMMSS` ディレクトリに保存されます。
 
-## License
+## 今後の拡張案
 
-MIT License - See LICENSE file for details
+以下の追加が可能です：
 
-## Citation
+- 時系列分析: 手数料の時間経過による進化
+- 地理的分析: 地域別の手数料差異
+- 容量相関: 手数料とチャネルサイズの関係
+- ノード中心性: ハブノードの手数料戦略
+- 経路探索: 最適ルートに対する手数料の影響
+- 予測モデリング: 手数料予測
 
-If you use this code in academic research, please cite:
+## 貢献
+
+貢献を歓迎します！改善可能な領域：
+
+- 追加の可視化タイプ
+- 統計的検定（例：分布適合）
+- 比較分析ツール
+- 時系列コンポーネント
+- 機械学習モデル
+
+## ライセンス
+
+MIT License - 詳細はLICENSEファイルを参照
+
+## 引用
+
+学術研究でこのコードを使用する場合は、以下のように引用してください：
 
 ```bibtex
 @software{lightning_fee_analysis,
-  title = {Lightning Network Fee Distribution Analysis},
+  title = {Lightning Network 手数料分布分析},
   author = {taipp-rd},
   year = {2025},
   url = {https://github.com/taipp-rd/Lightning-Network-Fees}
 }
 ```
 
-## Contact
+## お問い合わせ
 
-For questions or collaboration:
+質問やコラボレーションについて：
 - GitHub Issues: https://github.com/taipp-rd/Lightning-Network-Fees/issues
 
-## Acknowledgments
+## 謝辞
 
-This work builds on research from:
-- Pickhardt & Richter: Optimal payment flow theory
-- Rohrer et al.: Network resilience analysis
-- The Lightning Network developer community
+この研究は以下の成果に基づいています：
+- Pickhardt & Richter: 最適支払いフロー理論
+- Rohrer et al.: ネットワーク耐性分析
+- Lightning Network開発者コミュニティ
 
 ---
 
-**Note**: Always ensure you have proper authorization before accessing and analyzing Lightning Network data. Respect node operator privacy and follow responsible disclosure practices.
+**注意**: Lightning Networkデータにアクセスして分析する前に、適切な許可を得ていることを確認してください。ノード運営者のプライバシーを尊重し、責任ある開示慣行に従ってください。
