@@ -268,44 +268,10 @@ run_all_analyses.bat localhost 5432 lndb readonly secret
 - 経路探索: 最適ルートに対する手数料の影響
 - 予測モデリング: 手数料予測
 
-## 貢献
-
-貢献を歓迎します！改善可能な領域：
-
-- 追加の可視化タイプ
-- 統計的検定（例：分布適合）
-- 比較分析ツール
-- 時系列コンポーネント
-- 機械学習モデル
 
 ## ライセンス
 
-MIT License - 詳細はLICENSEファイルを参照
-
-## 引用
-
-学術研究でこのコードを使用する場合は、以下のように引用してください：
-
-```bibtex
-@software{lightning_fee_analysis,
-  title = {Lightning Network 手数料分布分析},
-  author = {taipp-rd},
-  year = {2025},
-  url = {https://github.com/taipp-rd/Lightning-Network-Fees}
-}
-```
-
-## お問い合わせ
-
-質問やコラボレーションについて：
-- GitHub Issues: https://github.com/taipp-rd/Lightning-Network-Fees/issues
-
-## 謝辞
-
-この研究は以下の成果に基づいています：
-- Pickhardt & Richter: 最適支払いフロー理論
-- Rohrer et al.: ネットワーク耐性分析
-- Lightning Network開発者コミュニティ
+MIT License 
 
 ---
 
