@@ -15,11 +15,11 @@ Lightning Networkにおける手数料構造の包括的な分析ツール。基
 
 Lightning Networkのルーティング手数料は2つの要素で構成されます：
 
-### Outbound手数料（従来型）
+### Outbound手数料
 - **基本手数料 (rp_base_fee_msat)**: 支払い額に関係なく課される固定手数料
 - **比例手数料 (rp_feerate_ppm)**: 支払い額に比例する手数料（百万分率で表現）
 
-### Inbound手数料（先進的）
+### Inbound手数料
 - **Inbound基本手数料 (rp_inbound_base_fee_msat)**: 支払い受信時の固定手数料
 - **Inbound比例手数料 (rp_inbound_feerate_ppm)**: 支払い受信時の比例手数料
 
