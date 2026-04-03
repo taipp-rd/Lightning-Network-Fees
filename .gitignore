@@ -1,0 +1,6 @@
+.env
+output/*.png
+__pycache__/
+*.pyc
+.venv/
+CLAUDE.md
