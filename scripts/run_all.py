@@ -7,6 +7,7 @@ from src.analysis import (
     base_fee,
     base_fee_vs_fee_rate,
     fee_rate,
+    fee_rate_when_base_fee_zero,
     inbound_base_fee,
     inbound_base_fee_vs_inbound_fee_rate,
     inbound_fee_rate,
@@ -15,28 +16,32 @@ from src.analysis import (
 if __name__ == "__main__":
     print("=== Lightning Network Fee Distribution Analysis ===\n", flush=True)
 
-    print("[1/6] base_fee_msat — 開始", flush=True)
+    print("[1/7] base_fee_msat — 開始", flush=True)
     base_fee.run()
-    print("[1/6] base_fee_msat — 完了\n", flush=True)
+    print("[1/7] base_fee_msat — 完了\n", flush=True)
 
-    print("[2/6] fee_rate_ppm — 開始", flush=True)
+    print("[2/7] fee_rate_ppm — 開始", flush=True)
     fee_rate.run()
-    print("[2/6] fee_rate_ppm — 完了\n", flush=True)
+    print("[2/7] fee_rate_ppm — 完了\n", flush=True)
 
-    print("[3/6] inbound_base_fee — 開始", flush=True)
+    print("[3/7] fee_rate_ppm (base_fee_msat=0) — 開始", flush=True)
+    fee_rate_when_base_fee_zero.run()
+    print("[3/7] fee_rate_ppm (base_fee_msat=0) — 完了\n", flush=True)
+
+    print("[4/7] inbound_base_fee — 開始", flush=True)
     inbound_base_fee.run()
-    print("[3/6] inbound_base_fee — 完了\n", flush=True)
+    print("[4/7] inbound_base_fee — 完了\n", flush=True)
 
-    print("[4/6] inbound_fee_rate — 開始", flush=True)
+    print("[5/7] inbound_fee_rate — 開始", flush=True)
     inbound_fee_rate.run()
-    print("[4/6] inbound_fee_rate — 完了\n", flush=True)
+    print("[5/7] inbound_fee_rate — 完了\n", flush=True)
 
-    print("[5/6] base_fee_msat vs fee_rate_ppm scatter — 開始", flush=True)
+    print("[6/7] base_fee_msat vs fee_rate_ppm scatter — 開始", flush=True)
     base_fee_vs_fee_rate.run()
-    print("[5/6] base_fee_msat vs fee_rate_ppm scatter — 完了\n", flush=True)
+    print("[6/7] base_fee_msat vs fee_rate_ppm scatter — 完了\n", flush=True)
 
-    print("[6/6] inbound_base_fee vs inbound_fee_rate scatter — 開始", flush=True)
+    print("[7/7] inbound_base_fee vs inbound_fee_rate scatter — 開始", flush=True)
     inbound_base_fee_vs_inbound_fee_rate.run()
-    print("[6/6] inbound_base_fee vs inbound_fee_rate scatter — 完了\n", flush=True)
+    print("[7/7] inbound_base_fee vs inbound_fee_rate scatter — 完了\n", flush=True)
 
     print("All graphs saved to output/", flush=True)

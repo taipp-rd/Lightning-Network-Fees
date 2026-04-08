@@ -383,3 +383,84 @@ def plot_fee_pair_scatter_rect(
     fig.savefig(output_path, dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved (scatter rect): {output_path}", flush=True)
+
+
+def plot_ppm_band_bar_chart(
+    values: Sequence[Numeric],
+    title: str,
+    xlabel: str,
+    output_path: Union[str, Path],
+    band_width_ppm: float,
+    display_max_ppm: float,
+    *,
+    y_log_scale: bool = True,
+) -> None:
+    """
+    fee_rate（ppm）を等幅の帯に分け、各帯のチャネル数を棒グラフで示す。
+
+    帯は [0, w), [w, 2w), …, [display_max - w, display_max] とし、
+    表示範囲外の値は集計から除き、件数は標準出力に出す。
+    """
+    w = float(band_width_ppm)
+    xmax = float(display_max_ppm)
+    if w <= 0 or xmax <= 0 or xmax < w:
+        raise ValueError("band_width_ppm と display_max_ppm は正で、かつ display_max >= band 幅である必要があります。")
+
+    arr = np.asarray(values, dtype=np.float64)
+    if arr.size == 0:
+        print(f"[charts] ppm 帯別棒: データ0件のため保存しません ({output_path})", flush=True)
+        return
+
+    xmin = 0.0
+    mask = (arr >= xmin) & (arr <= xmax)
+    n_in = int(np.sum(mask))
+    n_below = int(np.sum(arr < xmin))
+    n_above = int(np.sum(arr > xmax))
+    print(
+        f"[charts] ppm 帯別棒: 全 {int(arr.size)} 件、帯内 {n_in} 件、"
+        f"{xmin:g} 未満 {n_below}、{xmax:g} ppm 超 {n_above}",
+        flush=True,
+    )
+    if n_in == 0:
+        print(f"[charts] ppm 帯別棒: 表示範囲内にデータがないため保存しません ({output_path})", flush=True)
+        return
+
+    sub = arr[mask]
+    edges = np.arange(xmin, xmax + w, w, dtype=np.float64)
+    counts, _ = np.histogram(sub, bins=edges)
+    band_labels = [f"{int(edges[i])}–{int(edges[i + 1])}" for i in range(len(edges) - 1)]
+    x = np.arange(len(counts), dtype=np.float64)
+
+    output_path = Path(output_path)
+    fig, ax = plt.subplots(figsize=(max(14.0, 0.28 * len(counts)), 6.0))
+    ax.bar(
+        x,
+        counts,
+        width=0.92,
+        color="steelblue",
+        edgecolor="0.25",
+        linewidth=0.5,
+        alpha=0.88,
+    )
+    ax.set_xticks(x)
+    ax.set_xticklabels(band_labels, rotation=45, ha="right", fontsize=8)
+    ax.set_title(title, fontsize=16)
+    ax.set_xlabel(xlabel, fontsize=13)
+    ax.set_ylabel(
+        "Channel Count (log scale)" if y_log_scale else "Channel Count",
+        fontsize=13,
+    )
+    if y_log_scale:
+        ax.set_yscale("log")
+        ymax = float(np.max(counts)) if counts.size else 1.0
+        ax.set_ylim(bottom=1.0, top=max(ymax, 1.0))
+        ax.yaxis.set_major_locator(LogLocator(base=10))
+        ax.grid(axis="y", alpha=0.45, which="both")
+    else:
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.grid(axis="y", alpha=0.5, which="major")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved (ppm band bars): {output_path}", flush=True)

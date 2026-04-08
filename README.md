@@ -41,8 +41,6 @@ Lightning-Network-Fees/
 │   │   └── inbound_base_fee_vs_inbound_fee_rate.py  # inbound系散布図
 │   ├── visualization/
 │   │   └── charts.py                   # ヒストグラム・ECDF・散布図描画
-│   └── gossip/
-│       └── bolt7_channel_update.py     # BOLT #7 仕様メモ
 └── output/                             # 生成グラフの保存先（Git管理外）
 ```
 

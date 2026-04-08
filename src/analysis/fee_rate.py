@@ -3,6 +3,7 @@ from src.paths import PROJECT_ROOT
 from src.visualization.charts import plot_fee_distribution, plot_fee_ecdf
 
 OUTPUT_PATH = PROJECT_ROOT / "output" / "fee_rate_ppm.png"
+OUTPUT_PATH_LOW = PROJECT_ROOT / "output" / "fee_rate_ppm_0_50.png"
 OUTPUT_PATH_CDF = PROJECT_ROOT / "output" / "fee_rate_ppm_cdf.png"
 
 # 0〜2000 ppm を 50 ppm ビン（横軸主目盛は 100 ppm 間隔）
@@ -10,9 +11,18 @@ FEE_RATE_BIN_WIDTH_PPM = 50.0
 FEE_RATE_DISPLAY_MAX_PPM = 2000.0
 FEE_RATE_X_MAJOR_TICK_PPM = 100.0
 
+# 低レンジ: 0〜50 ppm を 1 ppm ビン（横軸主目盛は 5 ppm 間隔）、縦軸はチャネル数（線形）
+FEE_RATE_LOW_BIN_WIDTH_PPM = 1.0
+FEE_RATE_LOW_DISPLAY_MAX_PPM = 50.0
+FEE_RATE_LOW_X_MAJOR_TICK_PPM = 5.0
+
 
 def run() -> None:
-    """最新スナップショットの fee_rate_ppm をヒストグラムと経験累積分布（ECDF）で可視化する。"""
+    """
+    最新スナップショットの fee_rate_ppm（比例手数料）を可視化する。
+
+    全体レンジのヒストグラム、0〜50 ppm にフォーカスしたヒストグラム、ECDF を出力する。
+    """
     values = fetch_fee_column_values(
         "fee_rate_ppm",
         ("DB_COLUMN_FEE_RATE_PPM", "LN_COLUMN_FEE_RATE_PPM"),
@@ -31,6 +41,21 @@ def run() -> None:
         bin_width_msat=FEE_RATE_BIN_WIDTH_PPM,
         display_max_msat=FEE_RATE_DISPLAY_MAX_PPM,
         x_major_tick_step_msat=FEE_RATE_X_MAJOR_TICK_PPM,
+        axis_unit_label="ppm",
+    )
+
+    print(
+        "[fee_rate_ppm] 低レンジヒストグラムを描画しています（0〜50 ppm、1 ppm ビン、主目盛 5 ppm）…",
+        flush=True,
+    )
+    plot_fee_distribution(
+        values=values,
+        title="Fee Rate Distribution (ppm): 0–50, 1 ppm bins",
+        xlabel="Fee Rate (ppm)",
+        output_path=OUTPUT_PATH_LOW,
+        bin_width_msat=FEE_RATE_LOW_BIN_WIDTH_PPM,
+        display_max_msat=FEE_RATE_LOW_DISPLAY_MAX_PPM,
+        x_major_tick_step_msat=FEE_RATE_LOW_X_MAJOR_TICK_PPM,
         axis_unit_label="ppm",
     )
 
