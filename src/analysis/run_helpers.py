@@ -8,6 +8,7 @@ import numpy as np
 
 from src.db.connection import get_connection
 from src.db.fee_snapshot_query import (
+    QueryTimeRange,
     fee_distribution_select_sql,
     fee_pair_distribution_select_sql,
 )
@@ -17,15 +18,21 @@ def fetch_fee_column_values(
     log_label: str,
     value_column_env_keys: tuple[str, ...],
     default_value_column: str,
+    *,
+    time_range: QueryTimeRange = None,
 ) -> list[Any]:
     """
     手数料（または ppm）の1列を全行取得する。
 
+    time_range が与えられたときは ``fee_snapshot_query`` のモードに応じて
+    スナップショット列または ORDER 時刻列で範囲フィルタする。
+
     進捗は [log_label] プレフィックス付きで stdout に出す。
     """
-    query, mode_desc = fee_distribution_select_sql(
+    query, params, mode_desc = fee_distribution_select_sql(
         value_column_env_keys,
         default_value_column,
+        time_range=time_range,
     )
     print(f"[{log_label}] クエリ方式: {mode_desc}", flush=True)
 
@@ -36,7 +43,7 @@ def fetch_fee_column_values(
                 f"[{log_label}] SELECT を実行しています（件数が多いと時間がかかります）…",
                 flush=True,
             )
-            cur.execute(query)
+            cur.execute(query, params)
             print(f"[{log_label}] サーバから結果を受信中…", flush=True)
             rows = cur.fetchall()
 
@@ -50,17 +57,22 @@ def fetch_fee_pair_values(
     default_value_column_a: str,
     value_column_env_keys_b: tuple[str, ...],
     default_value_column_b: str,
+    *,
+    time_range: QueryTimeRange = None,
 ) -> list[tuple[Any, Any]]:
     """
     手数料（または ppm）の2列を、同一行・同一クエリモードで全行取得する。
 
+    time_range の意味は ``fetch_fee_column_values`` と同じ。
+
     進捗は [log_label] プレフィックス付きで stdout に出す。
     """
-    query, mode_desc = fee_pair_distribution_select_sql(
+    query, params, mode_desc = fee_pair_distribution_select_sql(
         value_column_env_keys_a,
         default_value_column_a,
         value_column_env_keys_b,
         default_value_column_b,
+        time_range=time_range,
     )
     print(f"[{log_label}] クエリ方式: {mode_desc}", flush=True)
 
@@ -71,7 +83,7 @@ def fetch_fee_pair_values(
                 f"[{log_label}] SELECT を実行しています（件数が多いと時間がかかります）…",
                 flush=True,
             )
-            cur.execute(query)
+            cur.execute(query, params)
             print(f"[{log_label}] サーバから結果を受信中…", flush=True)
             rows = cur.fetchall()
 

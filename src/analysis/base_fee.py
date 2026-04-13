@@ -5,7 +5,11 @@
 `LN_FEE_QUERY_MODE=latest_per_channel` とし、時刻列・タイブレーク列を合わせる。
 """
 
+import argparse
+
 from src.analysis.run_helpers import fetch_fee_column_values, log_numeric_summary
+from src.analysis.time_range_cli import add_query_time_arguments, time_range_from_namespace
+from src.db.fee_snapshot_query import QueryTimeRange
 from src.paths import PROJECT_ROOT
 from src.visualization.charts import plot_fee_distribution, plot_fee_ecdf
 
@@ -28,12 +32,13 @@ BASE_FEE_DETAIL_X_MAJOR_TICK_MSAT = 100.0
 BASE_FEE_MODE_RANGE_MAX_MSAT = 10000.0
 
 
-def run() -> None:
+def run(time_range: QueryTimeRange = None) -> None:
     """チャネルごとの最新行について、ベース手数料の分布をヒストグラム化する。"""
     values = fetch_fee_column_values(
         "base_fee_msat",
         ("DB_COLUMN_BASE_FEE_MSAT", "LN_COLUMN_BASE_FEE_MSAT"),
         "base_fee_msat",
+        time_range=time_range,
     )
     log_numeric_summary(
         "base_fee_msat",
@@ -82,3 +87,17 @@ def run() -> None:
         x_max_msat=BASE_FEE_DISPLAY_MAX_MSAT,
         x_major_tick_step_msat=BASE_FEE_X_MAJOR_TICK_MSAT,
     )
+
+
+def main() -> None:
+    """コマンドラインから ``run`` を起動する。"""
+    parser = argparse.ArgumentParser(
+        description="ベース手数料（msat）の分布をヒストグラム・ECDF で出力する。"
+    )
+    add_query_time_arguments(parser)
+    args = parser.parse_args()
+    run(time_range=time_range_from_namespace(args))
+
+
+if __name__ == "__main__":
+    main()

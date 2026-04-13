@@ -7,9 +7,13 @@ base_fee_msat = 0 のチャネルに限定した fee_rate_ppm の分布を可視
 
 from __future__ import annotations
 
+import argparse
+
 import numpy as np
 
 from src.analysis.run_helpers import fetch_fee_pair_values, log_numeric_summary
+from src.analysis.time_range_cli import add_query_time_arguments, time_range_from_namespace
+from src.db.fee_snapshot_query import QueryTimeRange
 from src.paths import PROJECT_ROOT
 from src.visualization.charts import (
     plot_fee_distribution,
@@ -61,7 +65,7 @@ def _fee_rates_with_base_fee_zero(
     return out, n_zero_base
 
 
-def run() -> None:
+def run(time_range: QueryTimeRange = None) -> None:
     """base_fee_msat = 0 に限定した fee_rate_ppm の帯別棒グラフ・低レンジ・ECDF を保存する。"""
     pairs = fetch_fee_pair_values(
         "fee_rate_ppm | base_fee_msat=0",
@@ -69,6 +73,7 @@ def run() -> None:
         "base_fee_msat",
         ("DB_COLUMN_FEE_RATE_PPM", "LN_COLUMN_FEE_RATE_PPM"),
         "fee_rate_ppm",
+        time_range=time_range,
     )
     values, n_zero = _fee_rates_with_base_fee_zero(pairs)
     print(
@@ -124,3 +129,17 @@ def run() -> None:
         x_max_msat=FEE_RATE_DISPLAY_MAX_PPM,
         x_major_tick_step_msat=FEE_RATE_CDF_X_MAJOR_TICK_PPM,
     )
+
+
+def main() -> None:
+    """コマンドラインから ``run`` を起動する。"""
+    parser = argparse.ArgumentParser(
+        description="base_fee=0 のチャネルに限った比例手数料率（ppm）の分布を出力する。"
+    )
+    add_query_time_arguments(parser)
+    args = parser.parse_args()
+    run(time_range=time_range_from_namespace(args))
+
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,8 @@
+import argparse
+
 from src.analysis.run_helpers import fetch_fee_column_values
+from src.analysis.time_range_cli import add_query_time_arguments, time_range_from_namespace
+from src.db.fee_snapshot_query import QueryTimeRange
 from src.paths import PROJECT_ROOT
 from src.visualization.charts import plot_fee_distribution, plot_fee_ecdf
 
@@ -12,12 +16,13 @@ INBOUND_FEE_RATE_DISPLAY_MAX_PPM = 500.0
 INBOUND_FEE_RATE_X_MAJOR_TICK_PPM = 100.0
 
 
-def run() -> None:
+def run(time_range: QueryTimeRange = None) -> None:
     """最新スナップショットの inbound_fee_rate 分布をグラフ化する。"""
     values = fetch_fee_column_values(
         "inbound_fee_rate",
         ("DB_COLUMN_INBOUND_FEE_RATE", "LN_COLUMN_INBOUND_FEE_RATE"),
         "inbound_fee_rate",
+        time_range=time_range,
     )
 
     print(
@@ -49,5 +54,15 @@ def run() -> None:
     )
 
 
+def main() -> None:
+    """コマンドラインから ``run`` を起動する。"""
+    parser = argparse.ArgumentParser(
+        description="インバウンド比例手数料率（ppm）の分布をヒストグラム・ECDF で出力する。"
+    )
+    add_query_time_arguments(parser)
+    args = parser.parse_args()
+    run(time_range=time_range_from_namespace(args))
+
+
 if __name__ == "__main__":
-    run()
+    main()

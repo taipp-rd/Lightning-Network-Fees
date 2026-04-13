@@ -4,7 +4,11 @@
 横軸 0〜2000 msat、縦軸 0〜2000 ppm に固定し、範囲内の点のみ描画する。
 """
 
+import argparse
+
 from src.analysis.run_helpers import fetch_fee_pair_values
+from src.analysis.time_range_cli import add_query_time_arguments, time_range_from_namespace
+from src.db.fee_snapshot_query import QueryTimeRange
 from src.paths import PROJECT_ROOT
 from src.visualization.charts import plot_fee_pair_scatter
 
@@ -18,7 +22,7 @@ SCATTER_X_MAJOR_TICK_MSAT = 200.0
 SCATTER_Y_MAJOR_TICK_PPM = 200.0
 
 
-def run() -> None:
+def run(time_range: QueryTimeRange = None) -> None:
     """base_fee_msat を横軸、fee_rate_ppm を縦軸とした散布図を保存する。"""
     pairs = fetch_fee_pair_values(
         "base_fee_msat vs fee_rate_ppm",
@@ -26,6 +30,7 @@ def run() -> None:
         "base_fee_msat",
         ("DB_COLUMN_FEE_RATE_PPM", "LN_COLUMN_FEE_RATE_PPM"),
         "fee_rate_ppm",
+        time_range=time_range,
     )
     xs = [p[0] for p in pairs]
     ys = [p[1] for p in pairs]
@@ -50,3 +55,17 @@ def run() -> None:
         x_major_tick=SCATTER_X_MAJOR_TICK_MSAT,
         y_major_tick=SCATTER_Y_MAJOR_TICK_PPM,
     )
+
+
+def main() -> None:
+    """コマンドラインから ``run`` を起動する。"""
+    parser = argparse.ArgumentParser(
+        description="ベース手数料と比例手数料率の散布図を出力する。"
+    )
+    add_query_time_arguments(parser)
+    args = parser.parse_args()
+    run(time_range=time_range_from_namespace(args))
+
+
+if __name__ == "__main__":
+    main()
