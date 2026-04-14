@@ -40,7 +40,8 @@ Lightning-Network-Fees/
 │   │   ├── inbound_base_fee.py
 │   │   ├── inbound_fee_rate.py
 │   │   ├── base_fee_vs_fee_rate.py     # 散布図
-│   │   └── inbound_base_fee_vs_inbound_fee_rate.py
+│   │   ├── inbound_base_fee_vs_inbound_fee_rate.py
+│   │   └── monthly_fee_ecdf_compare.py # 暦月別 ECDF 重ね描き（base_fee / fee_rate）
 │   ├── visualization/
 │   │   └── charts.py                   # ヒストグラム・ECDF・散布図描画
 └── output/                             # 生成グラフの保存先（Git管理外）
@@ -149,6 +150,18 @@ python3 -m src.analysis.inbound_base_fee_vs_inbound_fee_rate
 
 各コマンドは `python3 -m ... --help` で期間オプションを確認できます。
 
+### 月ごとの累積分布（ECDF）比較
+
+ORDER 時刻列の **最小値が属する暦月**から、**実行日の暦月**まで、各月について「その月内でチャネルごと最新の1行」だけを集め、`base_fee` と `fee_rate` の ECDF を **色分けして同一グラフ**に重ねます。
+
+```bash
+python3 -m src.analysis.monthly_fee_ecdf_compare
+```
+
+- 出力: `output/base_fee_msat_ecdf_by_month.png` と `output/fee_rate_ppm_ecdf_by_month.png`
+- 横軸レンジは単月 ECDF（`base_fee_msat_cdf.png` / `fee_rate_ppm_cdf.png`）に合わせ 0〜10,000 msat および 0〜2,000 ppm
+- 月の区切りは **UTC** の暦月（1日 00:00:00 UTC 〜 末日 23:59:59 UTC）。時刻列が Unix 秒の場合も同じ境界を `_time_range_bind_values` でバインドする
+
 ---
 
 ## 取得ロジックと期間指定
@@ -168,9 +181,11 @@ python3 -m src.analysis.inbound_base_fee_vs_inbound_fee_rate
 | `base_fee_msat.png` | ベース手数料ヒストグラム | 0〜10,000 msat | 100 msat | 対数 |
 | `base_fee_msat_0_1000_50msat.png` | ベース手数料（拡大） | 0〜1,000 msat | 50 msat | 線形 |
 | `base_fee_msat_cdf.png` | ベース手数料 ECDF | 0〜10,000 msat | — | 累積確率 |
+| `base_fee_msat_ecdf_by_month.png` | ベース手数料 ECDF（暦月別・重ね描き） | 0〜10,000 msat | — | 累積確率 |
 | `fee_rate_ppm.png` | 比例手数料率ヒストグラム | 0〜2,000 ppm | 50 ppm | 線形 |
 | `fee_rate_ppm_0_50.png` | 比例手数料率（低レンジ） | 0〜50 ppm | 1 ppm | 線形 |
 | `fee_rate_ppm_cdf.png` | 比例手数料率 ECDF | 0〜2,000 ppm | — | 累積確率 |
+| `fee_rate_ppm_ecdf_by_month.png` | 比例手数料率 ECDF（暦月別・重ね描き） | 0〜2,000 ppm | — | 累積確率 |
 | `fee_rate_ppm_when_base_fee_0_*.png` | base_fee=0 限定の帯別・低レンジ・ECDF | 同上系 | — | — |
 | `inbound_base_fee.png` | インバウンドベース手数料ヒストグラム | −1,000〜500 msat | 50 msat | 対数 |
 | `inbound_base_fee_cdf.png` | インバウンドベース手数料 ECDF | −1,000〜500 msat | — | 累積確率 |

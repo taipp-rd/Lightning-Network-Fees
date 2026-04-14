@@ -283,3 +283,31 @@ def fee_pair_distribution_select_sql(
         + describe_time_filter_clause(time_range)
     )
     return q, params, desc
+
+
+def fetch_order_time_column_min() -> object | None:
+    """
+    ORDER 時刻列の最小値（NULL 除外）を返す。
+
+    月次比較の「データが存在する最初の月」を決めるために使う。
+    大規模テーブルでは時間がかかるため ``statement_timeout`` を無効化する。
+    """
+    from src.db.connection import get_connection
+
+    rel = channels_qualified()
+    order_raw = (
+        _first_nonempty_env("DB_COLUMN_ORDER_TIME", "LN_COLUMN_ORDER_TIME")
+        or _first_nonempty_env("DB_COLUMN_SNAPSHOT", "LN_COLUMN_SNAPSHOT")
+        or "timestamp"
+    )
+    order_col = _validate_ident(order_raw.strip(), "DB_COLUMN_ORDER_TIME / LN_COLUMN_SNAPSHOT")
+    oc = sql.Identifier(order_col)
+    q = sql.SQL("SELECT MIN({}) FROM {} WHERE {} IS NOT NULL").format(oc, rel, oc)
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SET statement_timeout = 0")
+            cur.execute(q)
+            row = cur.fetchone()
+    if row is None:
+        return None
+    return row[0]

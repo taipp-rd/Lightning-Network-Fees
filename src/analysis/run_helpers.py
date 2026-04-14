@@ -20,12 +20,15 @@ def fetch_fee_column_values(
     default_value_column: str,
     *,
     time_range: QueryTimeRange = None,
+    silent: bool = False,
 ) -> list[Any]:
     """
     手数料（または ppm）の1列を全行取得する。
 
     time_range が与えられたときは ORDER 時刻列で範囲フィルタしてから
     チャネルごと最新 1 行を採用する。
+
+    silent が True のときは進捗を出さない（月次ループなど大量取得用）。
 
     進捗は [log_label] プレフィックス付きで stdout に出す。
     """
@@ -34,20 +37,23 @@ def fetch_fee_column_values(
         default_value_column,
         time_range=time_range,
     )
-    print(f"[{log_label}] クエリ方式: {mode_desc}", flush=True)
-
-    print(f"[{log_label}] DB に接続しています…", flush=True)
+    if not silent:
+        print(f"[{log_label}] クエリ方式: {mode_desc}", flush=True)
+        print(f"[{log_label}] DB に接続しています…", flush=True)
     with get_connection() as conn:
         with conn.cursor() as cur:
-            print(
-                f"[{log_label}] SELECT を実行しています（件数が多いと時間がかかります）…",
-                flush=True,
-            )
+            if not silent:
+                print(
+                    f"[{log_label}] SELECT を実行しています（件数が多いと時間がかかります）…",
+                    flush=True,
+                )
             cur.execute(query, params)
-            print(f"[{log_label}] サーバから結果を受信中…", flush=True)
+            if not silent:
+                print(f"[{log_label}] サーバから結果を受信中…", flush=True)
             rows = cur.fetchall()
 
-    print(f"[{log_label}] 取得完了: {len(rows)} 行（分布に使う値の数）", flush=True)
+    if not silent:
+        print(f"[{log_label}] 取得完了: {len(rows)} 行（分布に使う値の数）", flush=True)
     return [row[0] for row in rows]
 
 

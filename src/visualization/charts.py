@@ -207,6 +207,75 @@ def plot_fee_ecdf(
     print(f"Saved (ECDF): {output_path}", flush=True)
 
 
+def plot_ecdf_monthly_overlay(
+    series: Sequence[tuple[str, Sequence[Numeric]]],
+    title: str,
+    xlabel: str,
+    output_path: Union[str, Path],
+    *,
+    x_min: float = 0.0,
+    x_max: float,
+    x_major_tick_step: float | None = None,
+) -> None:
+    """
+    複数月の経験累積分布を同一座標に重ね描きする（凡例に月ラベル）。
+
+    各系列は ``(ラベル, 値の列)``。値は ``[x_min, x_max]`` に入る標本だけで ECDF を計算する。
+    系列ごとに色を変え、データが空の月は描画しない。
+    """
+    xmax = float(x_max)
+    xmin = float(x_min)
+    if xmin >= xmax:
+        raise ValueError("x_min は x_max より小さくしてください。")
+
+    output_path = Path(output_path)
+    cmap = plt.get_cmap("tab20")
+    fig, ax = plt.subplots(figsize=(12, 6))
+    n_plotted = 0
+    for i, (label, values) in enumerate(series):
+        arr = np.asarray(values, dtype=np.float64)
+        arr = arr[np.isfinite(arr)]
+        arr = arr[(arr >= xmin) & (arr <= xmax)]
+        if arr.size == 0:
+            continue
+        x_sorted = np.sort(arr)
+        n = int(x_sorted.size)
+        y = np.arange(1, n + 1, dtype=np.float64) / n
+        color = cmap(i % 20)
+        ax.plot(
+            x_sorted,
+            y,
+            drawstyle="steps-post",
+            color=color,
+            label=label,
+            lw=1.65,
+        )
+        n_plotted += 1
+
+    if n_plotted == 0:
+        print(
+            f"[charts] ECDF（月次重ね）: 表示可能な系列が0のため保存しません ({output_path})",
+            flush=True,
+        )
+        plt.close(fig)
+        return
+
+    ax.set_ylim(0.0, 1.0)
+    ax.set_xlim(xmin, xmax)
+    ax.set_title(title, fontsize=16)
+    ax.set_xlabel(xlabel, fontsize=13)
+    ax.set_ylabel("Cumulative probability F(x)", fontsize=13)
+    ax.grid(True, alpha=0.45)
+    if x_major_tick_step is not None:
+        ax.xaxis.set_major_locator(MultipleLocator(float(x_major_tick_step)))
+    ax.legend(loc="best", fontsize=8, ncol=min(4, max(1, n_plotted)), framealpha=0.92)
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(output_path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved (ECDF monthly overlay): {output_path}", flush=True)
+
+
 def plot_fee_pair_scatter(
     x_values: Sequence[Numeric],
     y_values: Sequence[Numeric],
