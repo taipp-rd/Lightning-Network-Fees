@@ -24,8 +24,8 @@ def fetch_fee_column_values(
     """
     手数料（または ppm）の1列を全行取得する。
 
-    time_range が与えられたときは ``fee_snapshot_query`` のモードに応じて
-    スナップショット列または ORDER 時刻列で範囲フィルタする。
+    time_range が与えられたときは ORDER 時刻列で範囲フィルタしてから
+    チャネルごと最新 1 行を採用する。
 
     進捗は [log_label] プレフィックス付きで stdout に出す。
     """
@@ -63,7 +63,7 @@ def fetch_fee_pair_values(
     """
     手数料（または ppm）の2列を、同一行・同一クエリモードで全行取得する。
 
-    time_range の意味は ``fetch_fee_column_values`` と同じ。
+    time_range の意味は ``fetch_fee_column_values`` と同じ（チャネルごと最新の 2 列）。
 
     進捗は [log_label] プレフィックス付きで stdout に出す。
     """

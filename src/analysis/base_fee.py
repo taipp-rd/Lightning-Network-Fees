@@ -1,8 +1,8 @@
 """
 ベース手数料（BOLT7 channel_update の fee_base_msat 相当、DB では多く rp_base_fee_msat）。
 
-チャネルごとに **1行だけ**（ゴシップ上の最新更新）を使うには `.env` で
-`LN_FEE_QUERY_MODE=latest_per_channel` とし、時刻列・タイブレーク列を合わせる。
+チャネルごとに **1行だけ**（ゴシップ上の最新更新）を使う。`.env` で
+チャネルID・ORDER 時刻・タイブレーク列をテーブルに合わせる。
 """
 
 import argparse

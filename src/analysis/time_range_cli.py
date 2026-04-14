@@ -33,7 +33,7 @@ def add_query_time_arguments(parser: argparse.ArgumentParser) -> None:
         "--time-mode",
         choices=("latest", "range"),
         default="latest",
-        help="latest: 期間指定なし（MAX スナップショットまたはチャネルごと全体最新）。"
+        help="latest: 期間指定なし（全期間の履歴からチャネルごと ORDER 時刻で最新の1行）。"
         " range: --time-start / --time-end で両端を含む範囲を指定。",
     )
     group.add_argument(
